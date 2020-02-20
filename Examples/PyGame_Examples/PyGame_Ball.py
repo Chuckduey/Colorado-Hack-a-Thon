@@ -3,21 +3,24 @@
 Description: This is a simple GUI app which creates a bouncing ball animation.
 
 Created: September 15, 2017
+Modified Feb 20, 2020
 
-Author: Blake Vermeer
+Author: Blake Vermeer + Chuck Duey
 '''
 
 import sys, pygame, os
 
 os.putenv('DISPLAY', ':0')
-
+x = 50
+y = 25
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
 pygame.init()
 
-size = width, height = 320, 240
+size = width, height = 700, 400
 speed = [1, 1]
 black = 0, 0, 0
 
-screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+screen = pygame.display.set_mode(size)
 
 # Be careful with this line! The touchscreen doesn't work correctly when hiding the mouse!
 pygame.mouse.set_visible(False)
