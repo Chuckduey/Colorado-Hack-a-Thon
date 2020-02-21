@@ -26,6 +26,9 @@ WHITE = (255,255,255)
 
 # Set the DISPLAY environmental variable to make sure that the GUI shows up on the PiTFT display
 os.putenv('DISPLAY', ':0')
+x = 50
+y = 25
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
 
 pygame.init()
 
@@ -34,7 +37,7 @@ pygame.init()
 # your program!
 pygame.mouse.set_visible(False)
 
-lcd = pygame.display.set_mode((320, 240), pygame.FULLSCREEN)
+lcd = pygame.display.set_mode((320, 240))
 lcd.fill((0,0,0))
 text_surface = pygame.font.Font(None, 50).render('Press a button...', True, WHITE)
 rect = text_surface.get_rect(center=(160,120))

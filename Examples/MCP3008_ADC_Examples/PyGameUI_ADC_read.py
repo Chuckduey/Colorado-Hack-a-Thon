@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/pythonr3.0
 '''
 Description: This PyGameUI program allows you to switch between any ADC inputs and view the voltage being
              applied to that input.
@@ -16,16 +16,26 @@ import signal
 import threading
 import time
 
-# Import SPI library (for hardware SPI) and the MCP3008 library.
-import Adafruit_GPIO.SPI as SPI
-import Adafruit_MCP3008
+import busio
+import digitalio
+import board
+import adafruit_mcp3xxx.mcp3008 as MCP
+from adafruit_mcp3xxx.analog_in import AnalogIn
 
+# Import SPI library (for hardware SPI) and the MCP3008 library.
 
 # Hardware SPI configuration:
 SPI_PORT = 1
 SPI_DEVICE = 0
+# create the spi bus
+spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 
-mcp = Adafruit_MCP3008.MCP3008(spi = SPI.SpiDev(SPI_PORT, SPI_DEVICE))
+# create the cs (chip select)
+cs = digitalio.DigitalInOut(board.D22)
+
+
+# create the mcp object
+mcp = MCP.MCP3008(spi, cs)
 
 
 log_format = '%(asctime)-6s: %(name)s - %(levelname)s - %(message)s'
@@ -50,7 +60,7 @@ class PotReader():
     def __call__(self):
         while not self.terminated:
             time.sleep(0.1)  # Only poll the voltage once every 100ms
-            volts = mcp.read_adc(self.pitft.chan) / 1024.0 * 3.3  # Read the ADC count from the selected channel and convert it to a voltage
+            volts = mcp.read(self.pitft.chan) / 1024.0 * 3.3  # Read the ADC count from the selected channel and convert it to a voltage
             self.pitft.set_chan_label(self.pitft.chan)
             self.pitft.set_volts_label(volts)
             self.pitft.set_progress(volts / 3.3)
@@ -116,7 +126,7 @@ potreader = PotReader(pitft)
 threading.Thread(target=potreader).start()
 
 def signal_handler(signal, frame):
-    print 'You pressed Ctrl+C!'
+    print ('You pressed Ctrl+C!')
     potreader.terminate()
     sys.exit(0)
         
